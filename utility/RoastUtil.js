@@ -1,4 +1,5 @@
 var DatabaseUtil = require('../utility/DatabaseUtil');
+var SQLiteUtil = require('../modules/SQLiteUtil');
 var Util = require('./Util');
 
 exports.getIdForRoast = function(type, paramId) {
@@ -12,12 +13,12 @@ exports.getIdForRoast = function(type, paramId) {
 
 exports.getRoast = function(type, id) {
     var selectStatement = `SELECT * FROM ${type} WHERE id = ${id}`;
-    return DatabaseUtil.executeGet(selectStatement);
+    return SQLiteUtil.getUnescapedStringForSQL(DatabaseUtil.executeGet(selectStatement));
 };
 
 exports.saveRoast = function(type, roastData, module) {
     var roastDataModule = new module(roastData);
-    return DatabaseUtil.executePost(roastDataModule.getSQLInsertionString());
+    return DatabaseUtil.executePost(SQLiteUtil.getEscapedStringForSQL(roastDataModule.getSQLInsertionString()));
 };
 
 function getCountForType(type) {
